@@ -84,4 +84,43 @@ res.cookie("refreshToken",refreshToken,{
      })
 }
 
+
+export async function refreshToken(req,res){
+   const refreshToken= req.cookies.refreshToken;
+   if(!refreshToken){
+    return res.status(401).json({
+        message: "Refresh token not found"
+    })
+   }
+   const decoded= jwt.verify(refreshToken, config.JWT_SECRET) 
+   const accessToken= jwt.sign({
+          id: decoded.id,
+   },config.JWT_SECRET,
+   {
+    expiresIn: '15m'
+   }
+
+)
+
+const newRefreshToken= jwt.sign({
+    id: decoded.id,
+}, config.JWT_SECRET,
+      {
+        expiresIn: "15d"
+      }
+)
+
+res.cookie("refreshToken", refreshToken,{
+    httpOnly:true,
+    secure:true,
+    sameSite:"strict",
+    maxAge: 7 * 24* 60* 60* 1000 
+}
+)
+
+res.status(201).json({
+    message:"Access token regenerated",
+    accessToken
+})
+}
    
