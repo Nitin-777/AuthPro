@@ -90,7 +90,7 @@ res.cookie("refreshToken",refreshToken,{
         const isValidPassword = hashedPassword === user.password
         if(!isValidPassword){
             return res.status(401).json({
-                message: "Password is invalid"
+                message: "Please enter correct password"
             })
         }
 
@@ -128,7 +128,7 @@ res.cookie("refreshToken",refreshToken,{
         
 
         res.status(200).json({
-            message: "user Loggedin successfully",
+            message: "user Logged In successfully ",
             user:{
                 username: user.username,
                 email: user.email,
