@@ -4,6 +4,9 @@
     import config from "../config/config.js";
     import sessionModel from "../models/session.model.js";
     import { sendEmail } from "../sevices/email.service.js";
+    import { generateOTP, getOtpHtml } from "../utils/utils.js";
+    import otpModel  from "../models/otp.model.js"
+
 
 
    export async function register(req,res){
