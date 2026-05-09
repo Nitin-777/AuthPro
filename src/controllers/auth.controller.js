@@ -5,7 +5,8 @@
     import sessionModel from "../models/session.model.js";
     import { sendEmail } from "../sevices/email.service.js";
     import { generateOTP, getOtpHtml } from "../utils/utils.js";
-    import otpModel  from "../models/otp.model.js"
+    import otpModel from "../models/otp.model.js";
+    
 
 
 
@@ -30,7 +31,7 @@
                 email,
                 password: hashedPassword
             })
-       const otp = generateOtp()
+       const otp = generateOTP()
        const html= getOtpHtml(otp);
        const otpHash= crypto.createHash("sha256").update(otp).digest("hex")
        await otpModel.create({
@@ -266,11 +267,20 @@ export async function verifyEmail(req,res){
         })
     }
 
-    const user= await user.userModel.findByIdAndUpdate(otpDoc.user,{
+    const user= await userModel.findByIdAndUpdate(otpDoc.user,{
         verified:true
     })
 
     await otpModel.deleteMany({
         user: otpDoc.user
+    })
+
+    return res.status(200).json({
+        message: "Email verified successfully",
+        user: {
+            username: user.username,
+            email: user.email,
+            verified: user.verified
+        }
     })
 }
