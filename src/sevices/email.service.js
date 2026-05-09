@@ -20,5 +20,14 @@ transporter.verify((error, success)=>{
     }
 });
 
+export const sendEmail= async(to,subject,text,html) => {
+    try{
+        const info= await transporter.sendMail({
+            from: `"Nitin Sharma <${config.GOOGLE_USER}>`,
+            to
+        })
+    }
+}
+
 
 module.exports=transporter;

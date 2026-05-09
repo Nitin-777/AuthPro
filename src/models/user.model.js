@@ -16,7 +16,12 @@ const userSchema = new mongoose.Schema({
         type:String,
         required: [true, "Password is reuired"],
         unique: true,
+    },
+    verified:{
+        type: Boolean,
+        default: false,
     }
+
 
 })
 
