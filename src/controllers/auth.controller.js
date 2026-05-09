@@ -30,8 +30,15 @@
                 email,
                 password: hashedPassword
             })
-    
-          await sendEmail(email,)
+       const otp = generateOtp()
+       const html= getOtpHtml(otp);
+       const otpHash= crypto.createHash("sha256").update(otp).digest("hex")
+       await otpModel.create({
+        email,
+        user: user._id,
+        otpHash
+       })
+       await sendEmail(email,"OTP verification", `Your Otp code is ${otp}`, html)
 
 
         res.status(201).json({
@@ -51,6 +58,12 @@
         if(!user){
             return res.status(401).json({
                 message: "Invalid email or password"
+            })
+        }
+
+        if(!user.verified){
+            return res.status(401).json({
+                message: "Email not verified"
             })
         }
 
@@ -235,5 +248,29 @@ export async function logoutAll(req,res){
 
     res.status(200).json({
         message:" Logged out from all devices successfully"
+    })
+}
+
+export async function verifyEmail(req,res){
+    const {otp, email}= req.body
+    const otpHash= crypto.createHash("sha256").update(otp).digest("hex")
+    const otpDoc= await otpModel.findOne({
+        email,
+        otpHash
+
+    })
+
+    if(!otpDoc){
+        return res.status(400).json({
+            message: "Invalid Otp"
+        })
+    }
+
+    const user= await user.userModel.findByIdAndUpdate(otpDoc.user,{
+        verified:true
+    })
+
+    await otpModel.deleteMany({
+        user: otpDoc.user
     })
 }
